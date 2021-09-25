@@ -14,6 +14,15 @@
 		7136DB0226F23175005DFC36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7136DB0126F23175005DFC36 /* Assets.xcassets */; };
 		7136DB0526F23175005DFC36 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7136DB0326F23175005DFC36 /* LaunchScreen.storyboard */; };
 		7136DB0826F23175005DFC36 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB0726F23175005DFC36 /* main.m */; };
+		7136DB1126F2DCA9005DFC36 /* LPRender.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB1026F2DCA9005DFC36 /* LPRender.m */; };
+		7136DB1426F2DD87005DFC36 /* LPMainTriangleMTKView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB1326F2DD87005DFC36 /* LPMainTriangleMTKView.m */; };
+		7136DB1926F305BC005DFC36 /* LPMainTriangleMTKSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB1826F305BC005DFC36 /* LPMainTriangleMTKSubView.m */; };
+		7136DB1B26F30F70005DFC36 /* LPShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB1A26F30F70005DFC36 /* LPShader.metal */; };
+		7136DB2426F33DC2005DFC36 /* LPTriangleModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB2326F33DC2005DFC36 /* LPTriangleModel.m */; };
+		7136DB2826F33E0A005DFC36 /* LPVertexModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB2726F33E0A005DFC36 /* LPVertexModel.m */; };
+		7136DB8F26FA47C2005DFC36 /* MetalUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB8826FA47C0005DFC36 /* MetalUtils.m */; };
+		7136DB9026FA47C2005DFC36 /* MetalMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB8A26FA47C0005DFC36 /* MetalMatrix.m */; };
+		7136DB9126FA47C2005DFC36 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7136DB8B26FA47C0005DFC36 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +38,26 @@
 		7136DB0426F23175005DFC36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7136DB0626F23175005DFC36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7136DB0726F23175005DFC36 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		7136DB0F26F2DCA8005DFC36 /* LPRender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPRender.h; sourceTree = "<group>"; };
+		7136DB1026F2DCA9005DFC36 /* LPRender.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LPRender.m; sourceTree = "<group>"; };
+		7136DB1226F2DD87005DFC36 /* LPMainTriangleMTKView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPMainTriangleMTKView.h; sourceTree = "<group>"; };
+		7136DB1326F2DD87005DFC36 /* LPMainTriangleMTKView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LPMainTriangleMTKView.m; sourceTree = "<group>"; };
+		7136DB1626F2ED28005DFC36 /* LPMTKConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPMTKConfig.h; sourceTree = "<group>"; };
+		7136DB1726F305BC005DFC36 /* LPMainTriangleMTKSubView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPMainTriangleMTKSubView.h; sourceTree = "<group>"; };
+		7136DB1826F305BC005DFC36 /* LPMainTriangleMTKSubView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LPMainTriangleMTKSubView.m; sourceTree = "<group>"; };
+		7136DB1A26F30F70005DFC36 /* LPShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = LPShader.metal; sourceTree = "<group>"; };
+		7136DB1C26F30F80005DFC36 /* LPShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPShaderTypes.h; sourceTree = "<group>"; };
+		7136DB2226F33DC2005DFC36 /* LPTriangleModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPTriangleModel.h; sourceTree = "<group>"; };
+		7136DB2326F33DC2005DFC36 /* LPTriangleModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LPTriangleModel.m; sourceTree = "<group>"; };
+		7136DB2626F33E0A005DFC36 /* LPVertexModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPVertexModel.h; sourceTree = "<group>"; };
+		7136DB2726F33E0A005DFC36 /* LPVertexModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LPVertexModel.m; sourceTree = "<group>"; };
+		7136DB2926F44A4E005DFC36 /* MainDefineHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainDefineHeader.h; path = Render/MainDefineHeader.h; sourceTree = "<group>"; };
+		7136DB8826FA47C0005DFC36 /* MetalUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetalUtils.m; sourceTree = "<group>"; };
+		7136DB8A26FA47C0005DFC36 /* MetalMatrix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetalMatrix.m; sourceTree = "<group>"; };
+		7136DB8B26FA47C0005DFC36 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		7136DB8C26FA47C0005DFC36 /* MetalMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalMatrix.h; sourceTree = "<group>"; };
+		7136DB8D26FA47C0005DFC36 /* YUV_To_RGB_Matrices_Vectors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YUV_To_RGB_Matrices_Vectors.h; sourceTree = "<group>"; };
+		7136DB8E26FA47C0005DFC36 /* MetalUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalUtils.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +90,7 @@
 		7136DAF426F23174005DFC36 /* ProtraitMetalDemo */ = {
 			isa = PBXGroup;
 			children = (
+				7136DB1526F2DD8F005DFC36 /* LPMainTriangleMTKView */,
 				7136DAF526F23174005DFC36 /* AppDelegate.h */,
 				7136DAF626F23174005DFC36 /* AppDelegate.m */,
 				7136DAF826F23174005DFC36 /* SceneDelegate.h */,
@@ -74,6 +104,65 @@
 				7136DB0726F23175005DFC36 /* main.m */,
 			);
 			path = ProtraitMetalDemo;
+			sourceTree = "<group>";
+		};
+		7136DB0E26F231B4005DFC36 /* Render */ = {
+			isa = PBXGroup;
+			children = (
+				7136DB8726FA47C0005DFC36 /* utils */,
+				7136DB1626F2ED28005DFC36 /* LPMTKConfig.h */,
+				7136DB2526F33DF2005DFC36 /* Models */,
+				7136DB0F26F2DCA8005DFC36 /* LPRender.h */,
+				7136DB1026F2DCA9005DFC36 /* LPRender.m */,
+				7136DB1A26F30F70005DFC36 /* LPShader.metal */,
+				7136DB1C26F30F80005DFC36 /* LPShaderTypes.h */,
+			);
+			path = Render;
+			sourceTree = "<group>";
+		};
+		7136DB1526F2DD8F005DFC36 /* LPMainTriangleMTKView */ = {
+			isa = PBXGroup;
+			children = (
+				7136DB2926F44A4E005DFC36 /* MainDefineHeader.h */,
+				7136DB1226F2DD87005DFC36 /* LPMainTriangleMTKView.h */,
+				7136DB1326F2DD87005DFC36 /* LPMainTriangleMTKView.m */,
+				7136DB1726F305BC005DFC36 /* LPMainTriangleMTKSubView.h */,
+				7136DB1826F305BC005DFC36 /* LPMainTriangleMTKSubView.m */,
+				7136DB0E26F231B4005DFC36 /* Render */,
+			);
+			path = LPMainTriangleMTKView;
+			sourceTree = "<group>";
+		};
+		7136DB2526F33DF2005DFC36 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7136DB2226F33DC2005DFC36 /* LPTriangleModel.h */,
+				7136DB2326F33DC2005DFC36 /* LPTriangleModel.m */,
+				7136DB2626F33E0A005DFC36 /* LPVertexModel.h */,
+				7136DB2726F33E0A005DFC36 /* LPVertexModel.m */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		7136DB8726FA47C0005DFC36 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				7136DB8826FA47C0005DFC36 /* MetalUtils.m */,
+				7136DB8926FA47C0005DFC36 /* MetalMatrix */,
+				7136DB8D26FA47C0005DFC36 /* YUV_To_RGB_Matrices_Vectors.h */,
+				7136DB8E26FA47C0005DFC36 /* MetalUtils.h */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		7136DB8926FA47C0005DFC36 /* MetalMatrix */ = {
+			isa = PBXGroup;
+			children = (
+				7136DB8A26FA47C0005DFC36 /* MetalMatrix.m */,
+				7136DB8B26FA47C0005DFC36 /* README.md */,
+				7136DB8C26FA47C0005DFC36 /* MetalMatrix.h */,
+			);
+			path = MetalMatrix;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,6 +223,7 @@
 			files = (
 				7136DB0526F23175005DFC36 /* LaunchScreen.storyboard in Resources */,
 				7136DB0226F23175005DFC36 /* Assets.xcassets in Resources */,
+				7136DB9126FA47C2005DFC36 /* README.md in Resources */,
 				7136DB0026F23174005DFC36 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,10 +235,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7136DB1126F2DCA9005DFC36 /* LPRender.m in Sources */,
 				7136DAFD26F23174005DFC36 /* ViewController.m in Sources */,
+				7136DB1B26F30F70005DFC36 /* LPShader.metal in Sources */,
 				7136DAF726F23174005DFC36 /* AppDelegate.m in Sources */,
 				7136DB0826F23175005DFC36 /* main.m in Sources */,
+				7136DB2426F33DC2005DFC36 /* LPTriangleModel.m in Sources */,
+				7136DB1426F2DD87005DFC36 /* LPMainTriangleMTKView.m in Sources */,
 				7136DAFA26F23174005DFC36 /* SceneDelegate.m in Sources */,
+				7136DB9026FA47C2005DFC36 /* MetalMatrix.m in Sources */,
+				7136DB8F26FA47C2005DFC36 /* MetalUtils.m in Sources */,
+				7136DB1926F305BC005DFC36 /* LPMainTriangleMTKSubView.m in Sources */,
+				7136DB2826F33E0A005DFC36 /* LPVertexModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +392,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NQVW9NYJ8J;
 				INFOPLIST_FILE = ProtraitMetalDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -312,6 +411,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NQVW9NYJ8J;
 				INFOPLIST_FILE = ProtraitMetalDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
