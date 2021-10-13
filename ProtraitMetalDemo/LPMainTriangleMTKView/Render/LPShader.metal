@@ -56,6 +56,7 @@ vertex VertexOut gaussianBlurVertexShader( uint vertexID [[vertex_id]],constant 
     //scale the vertex by scale factor of the current frame.
     pixelSpacePosition *= uniforms.scale;
     
+//    float2 viewportSize = float2(uniforms.viewportSize);
     out.position.xy = vertexArray[vertexID].position;
     out.position.z = 0.0;
     out.position.w = 1.0;
@@ -72,6 +73,12 @@ fragment float4 fragmentShader(RasterizerData in [[stage_in]], uint ii_id [[prim
     
 //    in.color *= 0.9;
     return in.color;
+
+//    if(in.clipSpacePosition.x < 0.5){
+//        return float4(0,0,0,1);
+//    }
+//    normalize(in.clipSpacePosition);
+
 }
 
 

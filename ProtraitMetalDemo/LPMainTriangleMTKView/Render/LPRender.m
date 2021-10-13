@@ -19,11 +19,13 @@ static const MTLPixelFormat LPDepthPixelFormat = MTLPixelFormatDepth32Float;
 #endif
 static const MTLPixelFormat LPPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
 //triangle edge leghth
+
 #define TriangleSize 7
 #define DrawableHeight  KScreenH * KScreenScale
 #define blockSize TriangleSize/2.00
 
 #define  RenderTargetSize 7
+
 
 static const NSUInteger NumVertex = 28;
 static const NSUInteger NumRow = 7;
@@ -225,6 +227,7 @@ static const LPTextureVertex textureVertices[] = {
                 guassBlurPipeLineDescriptor.vertexFunction = [shaderLib newFunctionWithName:@"gaussianBlurVertexShader"];
                 guassBlurPipeLineDescriptor.fragmentFunction = [shaderLib newFunctionWithName:@"gaussianBlurFragment"];
                 guassBlurPipeLineDescriptor.sampleCount = 1;
+                
                 guassBlurPipeLineDescriptor.colorAttachments[0].pixelFormat = LPPixelFormat;
                 
                 //draw guass blur pipeline
@@ -293,7 +296,6 @@ static const LPTextureVertex textureVertices[] = {
         [renderEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:_verticesBuffers[_currentBufferIndex].length/sizeof(LPVertex)];
 //    [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:_indexBuffer.length/sizeof(LPIndex) indexType:LPIndexType indexBuffer:_indexBuffer indexBufferOffset:0];
     [renderEncoder endEncoding];
-        
     }
 
 //    MPSImageLanczosScale * zos = [[MPSImageLanczosScale alloc]initWithDevice:_device];
@@ -332,7 +334,6 @@ static const LPTextureVertex textureVertices[] = {
 
 
         [encoder setRenderPipelineState: _gaussBlurPipelineState];
-
         [encoder setFragmentTexture: _GaussBlurTexture
                             atIndex: 0];
 //        [encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:_indexBuffer.length/sizeof(LPIndex) indexType:LPIndexType indexBuffer:_indexBuffer indexBufferOffset:0];
