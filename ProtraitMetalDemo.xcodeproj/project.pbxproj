@@ -23,6 +23,7 @@
 		7136DB8F26FA47C2005DFC36 /* MetalUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB8826FA47C0005DFC36 /* MetalUtils.m */; };
 		7136DB9026FA47C2005DFC36 /* MetalMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 7136DB8A26FA47C0005DFC36 /* MetalMatrix.m */; };
 		7136DB9126FA47C2005DFC36 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7136DB8B26FA47C0005DFC36 /* README.md */; };
+		71A3DBE827034FAB000F0EA2 /* colorUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71A3DBE627034FAB000F0EA2 /* colorUtils.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,8 @@
 		7136DB8C26FA47C0005DFC36 /* MetalMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalMatrix.h; sourceTree = "<group>"; };
 		7136DB8D26FA47C0005DFC36 /* YUV_To_RGB_Matrices_Vectors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YUV_To_RGB_Matrices_Vectors.h; sourceTree = "<group>"; };
 		7136DB8E26FA47C0005DFC36 /* MetalUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalUtils.h; sourceTree = "<group>"; };
+		71A3DBE627034FAB000F0EA2 /* colorUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = colorUtils.cpp; sourceTree = "<group>"; };
+		71A3DBE727034FAB000F0EA2 /* colorUtils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = colorUtils.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +154,8 @@
 				7136DB8926FA47C0005DFC36 /* MetalMatrix */,
 				7136DB8D26FA47C0005DFC36 /* YUV_To_RGB_Matrices_Vectors.h */,
 				7136DB8E26FA47C0005DFC36 /* MetalUtils.h */,
+				71A3DBE627034FAB000F0EA2 /* colorUtils.cpp */,
+				71A3DBE727034FAB000F0EA2 /* colorUtils.hpp */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -238,6 +243,7 @@
 				7136DB1126F2DCA9005DFC36 /* LPRender.m in Sources */,
 				7136DAFD26F23174005DFC36 /* ViewController.m in Sources */,
 				7136DB1B26F30F70005DFC36 /* LPShader.metal in Sources */,
+				71A3DBE827034FAB000F0EA2 /* colorUtils.cpp in Sources */,
 				7136DAF726F23174005DFC36 /* AppDelegate.m in Sources */,
 				7136DB0826F23175005DFC36 /* main.m in Sources */,
 				7136DB2426F33DC2005DFC36 /* LPTriangleModel.m in Sources */,
@@ -392,7 +398,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NQVW9NYJ8J;
 				INFOPLIST_FILE = ProtraitMetalDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -411,7 +417,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NQVW9NYJ8J;
 				INFOPLIST_FILE = ProtraitMetalDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

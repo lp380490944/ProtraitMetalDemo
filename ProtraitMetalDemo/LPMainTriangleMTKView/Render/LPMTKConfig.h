@@ -21,7 +21,7 @@
 // When enabled, the renderer creates a depth target (i.e. depth buffer)
 // and attaches with the render pass descritpr along with the drawable
 // texture for rendering.  This enables the app properly perform depth testing.
-#define CREATE_DEPTH_BUFFER   1
+#define CREATE_DEPTH_BUFFER   0
 
 
 #endif /* LPMTKConfig_h */

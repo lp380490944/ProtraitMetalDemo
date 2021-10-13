@@ -12,16 +12,33 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="LPMainTriangleMTKSubView">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wi4-na-Mc3" customClass="LPMainTriangleMTKSubView">
+                                <rect key="frame" x="0.0" y="144" width="414" height="414"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="wi4-na-Mc3" secondAttribute="height" id="Tn4-PM-aYB"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="wi4-na-Mc3" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="DAA-d7-vcg"/>
+                            <constraint firstItem="wi4-na-Mc3" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="jdU-XZ-iVF"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="wi4-na-Mc3" secondAttribute="trailing" id="qVL-jZ-HmG"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="renderView" destination="wi4-na-Mc3" id="Cmv-3U-p1y"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="20" y="80"/>
+            <point key="canvasLocation" x="18.840579710144929" y="79.6875"/>
         </scene>
     </scenes>
     <resources>

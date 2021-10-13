@@ -14,7 +14,6 @@ typedef enum LPVertexInputIndex{
     LPVertexInputIndexVertices = 0,
     LPVertexInputIndexUniforms = 1,
     LPVertexInputIndexIndices = 2,
-    LPVertexInputIndexTexture = 3,
 }LPVertexInputIndex;
 
 
@@ -22,14 +21,20 @@ typedef struct {
     //positon pixel space
     vector_float2 position;
     
-    //2D texture coordinate
+    //2D color
     vector_float4 color;
+    
 }LPVertex;
 
+typedef struct {
+    vector_float2 position;
+    vector_float2 texcoordinate;
+}LPTextureVertex;
 
 typedef struct{
     float scale;
     vector_uint2 viewportSize;
+    vector_float4 diagonalColor;
 }LPUniforms;
 
 

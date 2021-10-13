@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign)vector_float2 position;
 //2D texture coordinate
 @property(nonatomic,assign)vector_float4 color;
+//2d texture coordinate
+@property(nonatomic,assign)vector_float2 texcoordinate;
 @end
 
 NS_ASSUME_NONNULL_END

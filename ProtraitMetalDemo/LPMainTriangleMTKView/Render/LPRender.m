@@ -12,52 +12,77 @@
 #import "MainDefineHeader.h"
 #import <MetalPerformanceShaders/MetalPerformanceShaders.h>
 
+
 #if CREATE_DEPTH_BUFFER
 static const MTLPixelFormat LPDepthPixelFormat = MTLPixelFormatDepth32Float;
-#endif
 
+#endif
+static const MTLPixelFormat LPPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
 //triangle edge leghth
-#define TriangleSize KScreenW * KScreenScale
-#define blockSize TriangleSize/2
+#define TriangleSize 7
+#define DrawableHeight  KScreenH * KScreenScale
+#define blockSize TriangleSize/2.00
+
+#define  RenderTargetSize 7
 
 static const NSUInteger NumVertex = 28;
 static const NSUInteger NumRow = 7;
 static const NSUInteger NumColum = 7;
 
-// the max number of frame in flight
-
 static const NSUInteger MaxFrameInFlight = 1;
-
-static NSUInteger _hue_shift = 0;
 
 typedef UInt16 LPIndex;
 const  MTLIndexType LPIndexType = MTLIndexTypeUInt16;
 
-typedef struct {
-float h;
-float s;
-float v;
-}hsvColor;
-typedef struct {
-    float r;       // a fraction between 0 and 1
-    float g;       // a fraction between 0 and 1
-    float b;       // a fraction between 0 and 1
-} rgb;
 
-hsvColor hsv(float h,float s,float v){
- hsvColor color;
-color.h = h;
-color.s = s;
-color.v = v;
-return color;
-}
-static const float texCoor[] = {
-    0, 0, // 左下角
-    1, 0, // 右下角
-    0, 1, // 左上角
-    1, 1, // 右上角
+static const LPIndex indices[] = {
+  1,  0,  7,
+  2,  1,  8,
+  3,  2,  9,
+ 4,  3,  10,
+ 5,  4,  11,
+ 6,  5,  12, //12,//
+  1,  7,  8,
+  2,  8,  9,
+  3,  9,  10,
+  4, 10,  11,
+  5, 11,  12,//17,//
+  8, 7,  13,
+  9, 8,  14,
+  10, 9,  15,
+  11, 10,  16,
+  12, 11,  17, //17,//
+  8, 13,   14,
+  9, 14,   15,
+  10, 15,  16,
+  11, 16,  17, //21,//
+  14, 13,  18,
+  15, 14,  19,
+  16, 15,  20,
+  17,  16,  21, //21,//
+  14, 18,  19,
+  15, 19,  20,
+  16, 20,  21, //24,//
+  19, 18,  22,
+  20, 19,  23,
+  21, 20,  24, //24,//
+  19, 22,  23,
+  20, 23,  24, //26,//
+  23, 22,  25,
+  24, 23,  26, //26,//
+  23, 25,  26,//
+  26, 25,  27,
 };
 
+static const LPTextureVertex textureVertices[] = {
+//    {{1, -1},{1, 1}},
+//    {{-1, -1},{0, 1}},
+//    {{-1, 1}, {0,0} },
+//
+    {{1, 1},{1,0}},
+    {{-1, 1}, {0,0} },
+    {{-1, -1},{0, 1}},
+};
 
 
 @implementation LPRender{
@@ -89,6 +114,7 @@ static const float texCoor[] = {
     id <MTLRenderPipelineState> _gaussBlurPipelineState;
     MTLRenderPassDescriptor *_gaussBlurRenderTargetDesc;
     id <MTLTexture> _GaussBlurTexture;
+    id <MTLTexture> _tempTexture;
 }
 
 -(instancetype)initWithMetalDevice:(nonnull id <MTLDevice>)device drawablePixelFormat:(MTLPixelFormat)drawablePixelFormat{
@@ -99,10 +125,24 @@ static const float texCoor[] = {
         _device = device;
         _commandQueue = [device newCommandQueue];
         
+        // build texture.
+        MTLTextureDescriptor * textureDescriptor = [MTLTextureDescriptor new];
+        textureDescriptor.pixelFormat = LPPixelFormat;
+        textureDescriptor.textureType = MTLTextureType2D;
+        textureDescriptor.width = RenderTargetSize;
+        textureDescriptor.height = RenderTargetSize;
+        textureDescriptor.sampleCount = 1;
+        textureDescriptor.usage = MTLTextureUsageShaderRead|MTLTextureUsageRenderTarget;
+        _GaussBlurTexture = [_device newTextureWithDescriptor:textureDescriptor];
+        textureDescriptor.usage = MTLTextureUsageShaderRead|MTLTextureUsageShaderWrite;
+        _tempTexture = [_device newTextureWithDescriptor:textureDescriptor];
         _drawbleRenderDescriptor = [[MTLRenderPassDescriptor alloc] init];
+        _drawbleRenderDescriptor.renderTargetWidth = RenderTargetSize;
+        _drawbleRenderDescriptor.renderTargetHeight = RenderTargetSize;
+        _drawbleRenderDescriptor.colorAttachments[0].texture = _GaussBlurTexture;
         _drawbleRenderDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
         _drawbleRenderDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-        _drawbleRenderDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 1);
+        _drawbleRenderDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1, 1, 1, 1);
 #if CREATE_DEPTH_BUFFER
         _drawbleRenderDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
         _drawbleRenderDescriptor.depthAttachment.storeAction = MTLStoreActionDontCare;
@@ -128,17 +168,6 @@ static const float texCoor[] = {
             
             [self generateVertex];
             
-            
-//            static const LPVertex quadVertices[] =
-//            {
-//                { {  blockSize,  -blockSize }, { 1.f, 0.f, 0.f, 1.f } }, //A
-//                { { -blockSize, -blockSize  }, {  0.f, 1.f, 0.f, 1.f } },//B
-//                { { -blockSize, blockSize   }, { 0.0f, 0.0f, 1.f, 1.0f} },//C
-//
-////                { {  blockSize,  -blockSize }, { 1.f, 0.f, 0.f, 1.f } },//A
-////                { { -blockSize, blockSize   }, { 0.0f, 0.0f, 1.f, 1.0f} },//C
-//                { { blockSize, blockSize   }, {1.0f, 0.0f, 1.0f, 1.0f} },//D
-//            };
             NSUInteger vertexNum = _vertexModelArray.count;
             for (NSUInteger bufferIndex = 0; bufferIndex < MaxFrameInFlight; bufferIndex++) {
                 
@@ -149,51 +178,15 @@ static const float texCoor[] = {
                     LPVertexModel * vertexModel = _vertexModelArray[vertex];
                     vertices[vertex].position = vertexModel.position;
                     vertices[vertex].color = vertexModel.color;
+//                    vertices[vertex].texcoordinate = vertexModel.texcoordinate;
                     if (vertex == 0|| vertex == 6 || vertex == 27) {
     //                    vertices[vertex].color = simd_make_float4(1,1,1,1);
                     }
                 }
             }
-            static const LPIndex indices[] = {
-              1,  0,  7,
-              2,  1,  8,
-              3,  2,  9,
-             4,  3,  10,
-             5,  4,  11,
-             6,  5,  12, //12,//
-              1,  7,  8,
-              2,  8,  9,
-              3,  9,  10,
-              4, 10,  11,
-              5, 11,  12,//17,//
-              8, 7,  13,
-              9, 8,  14,
-              10, 9,  15,
-              11, 10,  16,
-              12, 11,  17, //17,//
-              8, 13,   14,
-              9, 14,   15,
-              10, 15,  16,
-              11, 16,  17, //21,//
-              14, 13,  18,
-              15, 14,  19,
-              16, 15,  20,
-              17,  16,  21, //21,//
-              14, 18,  19,
-              15, 19,  20,
-              16, 20,  21, //24,//
-              19, 18,  22,
-              20, 19,  23,
-              21, 20,  24, //24,//
-              19, 22,  23,
-              20, 23,  24, //26,//
-              23, 22,  25,
-              24, 23,  26, //26,//
-              23, 25,  26,//
-              26, 25,  27,
-            };
+          
             
-            _indexBuffer = [_device newBufferWithBytes:indices length:sizeof(indices) options:MTLResourceStorageModeShared];
+//            _indexBuffer = [_device newBufferWithBytes:indices length:sizeof(indices) options:MTLResourceStorageModeShared];
             _indexBuffer.label = @"MyIndexBuffer";
             
             //Create a pipeline state descriptor to create a compiled pipleline state object.
@@ -201,19 +194,19 @@ static const float texCoor[] = {
             pipelineDescriptor.label = @"myPipeline";
             pipelineDescriptor.vertexFunction = vertexProgram;
             pipelineDescriptor.fragmentFunction = fragmentProgram;
-            pipelineDescriptor.colorAttachments[0].pixelFormat = drawablePixelFormat;
+            pipelineDescriptor.colorAttachments[0].pixelFormat = LPPixelFormat;
             
             MTLVertexDescriptor * vertexDescriptor = [MTLVertexDescriptor new];
             vertexDescriptor.attributes[0].format = MTLVertexFormatFloat2;
             vertexDescriptor.attributes[0].bufferIndex = LPVertexInputIndexVertices;
             vertexDescriptor.attributes[0].offset = 0;
-            
+
             //color
             vertexDescriptor.attributes[1].format = MTLVertexFormatFloat4;
             vertexDescriptor.attributes[1].bufferIndex = LPVertexInputIndexVertices;
             vertexDescriptor.attributes[1].offset = sizeof(vector_float2);
             vertexDescriptor.layouts[0].stride = sizeof(LPVertex);
-            
+
             pipelineDescriptor.vertexDescriptor = vertexDescriptor;
         
 #if CREATE_DEPTH_BUFFER
@@ -232,7 +225,7 @@ static const float texCoor[] = {
                 guassBlurPipeLineDescriptor.vertexFunction = [shaderLib newFunctionWithName:@"gaussianBlurVertexShader"];
                 guassBlurPipeLineDescriptor.fragmentFunction = [shaderLib newFunctionWithName:@"gaussianBlurFragment"];
                 guassBlurPipeLineDescriptor.sampleCount = 1;
-                guassBlurPipeLineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+                guassBlurPipeLineDescriptor.colorAttachments[0].pixelFormat = LPPixelFormat;
                 
                 //draw guass blur pipeline
                 NSError * error;
@@ -253,11 +246,6 @@ static const float texCoor[] = {
         LPVertexModel * vertexModel = _vertexModelArray[vertex];
         vertices[vertex].position = vertexModel.position;
         vertices[vertex].color = vertexModel.color;
-        if (vertex == 0|| vertex == 6 || vertex == 27) {
-//            vertices[vertex].color = simd_make_float4(1,1,1,1);
-        }else{
-//            vertices[vertex].color = simd_make_float4(0,0,0,1);
-        }
     }
 }
 
@@ -281,13 +269,14 @@ static const float texCoor[] = {
     if (!currentDrawable) {
         return;
     }
-    
-    _drawbleRenderDescriptor.colorAttachments[0].texture = currentDrawable.texture;
+    {
+        
+     // render to textureDrawable renderEncoder.
     id <MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:_drawbleRenderDescriptor];
     
     [renderEncoder setRenderPipelineState:_pipelineState];
     [renderEncoder setVertexBuffer:_verticesBuffers[_currentBufferIndex] offset:0 atIndex:LPVertexInputIndexVertices];
-    [renderEncoder setVertexBuffer:_indexBuffer offset:0 atIndex:LPVertexInputIndexIndices];
+//    [renderEncoder setVertexBuffer:_indexBuffer offset:0 atIndex:LPVertexInputIndexIndices];
     
     {
         LPUniforms uniforms;
@@ -300,22 +289,63 @@ static const float texCoor[] = {
         uniforms.viewportSize = _viewportSize;
         [renderEncoder setVertexBytes:&uniforms length:sizeof(uniforms) atIndex:LPVertexInputIndexUniforms];
     }
-    [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:_indexBuffer.length/sizeof(LPIndex) indexType:LPIndexType indexBuffer:_indexBuffer indexBufferOffset:0];
+        
+        [renderEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:_verticesBuffers[_currentBufferIndex].length/sizeof(LPVertex)];
+//    [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:_indexBuffer.length/sizeof(LPIndex) indexType:LPIndexType indexBuffer:_indexBuffer indexBufferOffset:0];
     [renderEncoder endEncoding];
-    [commandBuffer presentDrawable:currentDrawable];
-//    MPSImageGaussianBlur * gaussianBlur = [[MPSImageGaussianBlur alloc] initWithDevice:_device sigma:5];
-//    [gaussianBlur encodeToCommandBuffer:commandBuffer sourceTexture: destinationTexture:currentDrawable.texture];
+        
+    }
 
+//    MPSImageLanczosScale * zos = [[MPSImageLanczosScale alloc]initWithDevice:_device];
+//    [zos encodeToCommandBuffer:commandBuffer sourceTexture:_GaussBlurTexture destinationTexture:_tempTexture];
+//    MPSImageGaussianBlur * blur = [[MPSImageGaussianBlur alloc] initWithDevice:_device sigma:1];
+//
+//    [blur encodeToCommandBuffer:commandBuffer sourceTexture:_GaussBlurTexture destinationTexture:_tempTexture];
     
+    // guassblurTexture renderEncoder.
+    {
+        MTLRenderPassDescriptor * gaussBlurRenderPassDescriptor = [MTLRenderPassDescriptor new];
+        gaussBlurRenderPassDescriptor.colorAttachments[0].texture = currentDrawable.texture;
+        gaussBlurRenderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+        gaussBlurRenderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+        gaussBlurRenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1, 1.0, 1.0, 1.0);
+
+        id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor: gaussBlurRenderPassDescriptor];
+        encoder.label = @"gauss blur Command Encoder";
+
+        [encoder setVertexBuffer:_verticesBuffers[_currentBufferIndex] offset:0 atIndex:LPVertexInputIndexVertices];
+        [encoder setVertexBytes:&textureVertices length:sizeof(textureVertices) atIndex:0];
+//        [encoder setVertexBuffer:_indexBuffer offset:0 atIndex:LPVertexInputIndexIndices];
+
+        {
+            LPUniforms uniforms;
+    #if ANIMATION_RENDERING
+            uniforms.scale = 0.5 + (1.0 + 0.5 * sin(_frameNum * 0.1));
+            uniforms.scale = 1.0f;
+    #else
+            uniforms.scale = 1.0f;
+    #endif
+            uniforms.viewportSize = _viewportSize;
+            [encoder setVertexBytes:&uniforms length:sizeof(uniforms) atIndex:LPVertexInputIndexUniforms];
+        }
+
+
+
+        [encoder setRenderPipelineState: _gaussBlurPipelineState];
+
+        [encoder setFragmentTexture: _GaussBlurTexture
+                            atIndex: 0];
+//        [encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:_indexBuffer.length/sizeof(LPIndex) indexType:LPIndexType indexBuffer:_indexBuffer indexBufferOffset:0];
+        [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
+        [encoder endEncoding];
+        [commandBuffer presentDrawable:currentDrawable];
+    }
     __block dispatch_semaphore_t block_semaphore = _inFlightSemaphore;
     [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull buffer) {
         dispatch_semaphore_signal(block_semaphore);
-        [self renderGuassBlur:metalLayer];
     }];
-    
+//    id <MTLRasterizationRateMap> map ;
     [commandBuffer commit];
-    
-    _hue_shift += 1;
 }
 
 -(void)drawableResize:(CGSize)drawableSize{
@@ -336,16 +366,9 @@ static const float texCoor[] = {
     _drawbleRenderDescriptor.depthAttachment.texture = _depthTargetTexture;
 #endif
     
-    _gaussBlurRenderTargetDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-    MTLRenderPassColorAttachmentDescriptor *colorAttachment = _drawbleRenderDescriptor.colorAttachments[0];
-        colorAttachment.texture = _mtkLayer.nextDrawable.texture;
-    colorAttachment.loadAction = MTLLoadActionClear;
-    colorAttachment.storeAction = MTLStoreActionStore;
-    colorAttachment.clearColor = MTLClearColorMake(1, 1, 1, 1);
 }
 
 -(void)generateVertex{
-    
     const vector_float4 Colors[] = {
         { 1.0, 0.0, 0.0, 1.0 },//Red
         { 0.0, 1.0, 0.0, 1.0 },//Green
@@ -358,7 +381,7 @@ static const float texCoor[] = {
     NSMutableArray * verticesArray = [NSMutableArray arrayWithCapacity:NumVertex];
     
     //initialize each vertexModel
-    const float sliceSize = TriangleSize / (NumColum - 1);
+    const float sliceSize = (float)TriangleSize / (float)(NumColum);
     
     NSUInteger counter = 0;
     for (NSUInteger row = 0; row < NumRow; row++) {
@@ -367,11 +390,19 @@ static const float texCoor[] = {
             
             LPVertexModel * model = [LPVertexModel new];
             vector_float2 vertexPosition;
-            vertexPosition.x = -(blockSize) + colum * sliceSize;
-            vertexPosition.y = -(blockSize) + (NumRow - row) * sliceSize;
+            vertexPosition.x = -((float)blockSize) + colum * sliceSize + 0.5;
+            vertexPosition.y = -((float)blockSize) + (NumRow - row) * sliceSize - 0.5;
             model.position = vertexPosition;
             model.color = Colors[counter % NumColors];
-            UIColor * randomColor = [UIColor colorWithHue:arc4random()%360/360.0 saturation:1.0 brightness:1.0 alpha:arc4random()%10/10.0];
+            //texture coordinate
+            vector_float2 texcoordinate;
+            texcoordinate.x = (float) colum/ (float)NumColum;
+            texcoordinate.y =  (float)(NumRow - row)/(float)NumRow;
+            
+            NSLog(@"textcoordinate =( %f, %f)",texcoordinate.x,texcoordinate.y);
+            
+            model.texcoordinate = texcoordinate;
+            UIColor * randomColor = [UIColor colorWithHue:arc4random()%360/360.0 saturation:1.0 brightness:1.0 alpha:1];
             CGFloat r;
             CGFloat g;
             CGFloat b;
@@ -389,145 +420,7 @@ static const float texCoor[] = {
 }
 
 
-//morph effect 由于morpheffect 是计算出来的所以就直接放在了.metal里面
 
 
-
-hsvColor getMorphColor(vector_float2 vetor){
- 
-    double value = 0;
-
-    value += sin(vetor.x/30.0);
-
-    value += sin(vetor.y/15.0);
-
-    value += sin((vetor.x + vetor.y)/30.0);
-
-    value += sin(sqrt(vetor.x * vetor.x + vetor.y * vetor.y)/30.0);
-    // shift range from -4 .. 4 to 0 .. 8
-    value += 2;
-    // bring range down to 0 .. 1
-    value /= 4;
-     hsvColor color  = hsv((_hue_shift  + (uint16_t)(value * 360)) % 360 , 1.0, 1.0);
-    return color;
-}
-
-
-rgb hsv2rgb(hsvColor input)
-{
-    float      hh, p, q, t, ff;
-    long        i;
-    rgb         output;
-
-    if(input.s <= 0.0) {       // < is bogus, just shuts up warnings
-        output.r = input.v;
-        output.g = input.v;
-        output.b = input.v;
-        return output;
-    }
-    hh = input.h;
-    if(hh >= 360.0) hh = 0.0;
-    hh /= 60.0;
-    i = (long)hh;
-    ff = hh - i;
-    p = input.v * (1.0 - input.s);
-    q = input.v * (1.0 - (input.s * ff));
-    t = input.v * (1.0 - (input.s * (1.0 - ff)));
-
-    switch(i) {
-    case 0:
-        output.r = input.v;
-        output.g = t;
-        output.b = p;
-        break;
-    case 1:
-        output.r = q;
-        output.g = input.v;
-        output.b = p;
-        break;
-    case 2:
-        output.r = p;
-        output.g = input.v;
-        output.b = t;
-        break;
-
-    case 3:
-        output.r = p;
-        output.g = q;
-        output.b = input.v;
-        break;
-    case 4:
-        output.r = t;
-        output.g = p;
-        output.b = input.v;
-        break;
-    case 5:
-    default:
-        output.r = input.v;
-        output.g = p;
-        output.b = q;
-        break;
-    }
-    return output;
-}
-
--(void)renderGuassBlur:(CAMetalLayer *)layer{
-    id<CAMetalDrawable> currentDrawable = [layer nextDrawable];
-    
-    // 将本次 Command Encoder 和 渲染的目标（Layer 的 texture）关联起来
-    _gaussBlurRenderTargetDesc.colorAttachments[0].texture = currentDrawable.texture;
-    
-    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
-    commandBuffer.label = @"gauss blur Command Buffer";
-    
-    id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor: _gaussBlurRenderTargetDesc];
-    encoder.label = @"gauss blur Command Encoder";
-    
-    [encoder setViewport: (MTLViewport) {
-        .originX = 0,
-        .originY = 0,
-        .width = layer.drawableSize.width,
-        .height = layer.drawableSize.height,
-        .znear = 0,
-        .zfar = 1
-    }];
-    
-    [encoder setVertexBuffer:_verticesBuffers[_currentBufferIndex] offset:0 atIndex:LPVertexInputIndexVertices];
-    [encoder setVertexBuffer:_indexBuffer offset:0 atIndex:LPVertexInputIndexIndices];
-    
-    {
-        LPUniforms uniforms;
-#if ANIMATION_RENDERING
-        uniforms.scale = 0.5 + (1.0 + 0.5 * sin(_frameNum * 0.1));
-        uniforms.scale = 1.0f;
-#else
-        uniforms.scale = 1.0f;
-#endif
-        uniforms.viewportSize = _viewportSize;
-        [encoder setVertexBytes:&uniforms length:sizeof(uniforms) atIndex:LPVertexInputIndexUniforms];
-    }
-
-
-    
-    [encoder setRenderPipelineState: _gaussBlurPipelineState];
-    
-//    [encoder setVertexBytes: brightnessVertices
-//                     length: sizeof(brightnessVertices)
-//                    atIndex: 0];
-    
-    [encoder setVertexBytes: texCoor
-                     length: sizeof(texCoor)
-                    atIndex: LPVertexInputIndexTexture];
-    
-    [encoder setFragmentTexture: _depthTargetTexture
-                        atIndex: 0];
-    [encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:_indexBuffer.length/sizeof(LPIndex) indexType:LPIndexType indexBuffer:_indexBuffer indexBufferOffset:0];
-    
-    [encoder endEncoding];
-    
-    [commandBuffer presentDrawable: currentDrawable];
-    
-    [commandBuffer commit];
-}
 
 @end
